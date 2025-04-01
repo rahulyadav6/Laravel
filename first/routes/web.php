@@ -4,7 +4,20 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FirstControler;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserListController;
+use App\Http\Controllers\MovieController;
+use App\Http\Middleware\testMiddleware;
+use App\Http\Middleware\testMiddleware2;
+use App\Http\Controllers\DiscountController;
+use App\Http\Controllers\RequestController;
+use App\Http\Controllers\RequestFormController;
+use App\Http\Controllers\cookieController;
+use App\Http\Controllers\cookieformController;
+use App\Http\Controllers\cookieformController1;
+use App\Http\Controllers\sessionController;
+use App\Http\Controllers\loginController;
+use App\Http\Controllers\validationController;
 
+use App\Http\Controllers\PlanetTemperatureController;
 Route::get('/', function () {
     return view('welcome');
 });
@@ -238,3 +251,127 @@ Route::controller(OrderController::class)->group(function(){
 
 /*Assignment */
 Route::get("user", [UserListController::class, 'users']);
+
+
+
+
+
+
+/* CA- 1 */
+
+Route::get("/movies", [MovieController::class, 'movies']);
+
+
+// middlewares
+// Route::get("testmiddleware", function(){
+//     return "Hello middlwre";
+// })->middleware(testmiddleware::class);
+
+
+// Route::get("testmiddleware", function(){
+//     return "Hello middlwre";
+// })->middleware(testmiddleware::class)->middleware(testmiddleware2::class);
+
+
+// Route::get("testingmiddleware2", function(){
+//     return "Hello";
+// })->middleware(['Test1', 'Test2']);
+
+
+
+// middleware groups
+
+Route::middleware('Test1', 'Test2')->group(function (){
+    Route::get('profile', function (){
+        return "This is my profile";
+    });
+    Route::get('signup', function(){
+        return "This is sign up page";
+    });
+    Route::get('home', function (){
+        return "This is home page";
+    })->withoutMiddleware(Test1::class);
+});
+
+//grouping middlwares
+
+Route::get('testingmiddleware0', function(){
+    return "Hello";
+})->middleware('Test');
+
+
+Route::get('query', function($request){
+    if($request->query('status')=='active'){
+        return "You are logged in";
+    }else{
+        return "Denied";
+    }
+});
+
+
+
+// Accessing private function
+Route::get('calculatediscount/{price}/{discount}', [DiscountController::class, 'calculateDiscount']);
+
+// request controller
+Route::get('request/input', [RequestController::class, 'index']);
+
+
+
+// Request class methods with the help of form
+Route::get('requestform', function(){
+    return view('requestform');
+});
+Route::post('requestform', [RequestFormController::class,'index']);
+
+
+
+// working with cookies
+Route::get('setcookie',[cookieController::class, 'setcookie']);
+Route::get('getcookie', [cookieController::class, 'getcookie']);
+Route::get('deletecookie', [cookieController::class, 'deletecookie']);
+
+// cookie with form 
+Route::get('cookieform', function(){
+    return view('cookieform');
+});
+Route::post('cookieform', [cookieformController::class, 'setcookiethroughform']);
+
+
+Route::get('/setcookie1', [cookieformController1::class, 'setcookie']);
+Route::get('/getcookie1', [cookieformController1::class, 'getcookie']);
+Route::get('/removecookie1', [cookieformController1::class, 'removecookie']);
+
+
+// working with session 
+Route::get('/setsession', [sessionController::class, 'storeSession']);
+Route::get('/getsession', [sessionController::class, 'getSession']);
+Route::get('/deletesession', [sessionController::class, 'deleteSession']);
+
+
+// Classwork | Set cooking from form data using cookie fascades
+Route::get('/setcookie2', function(){
+    return view('cookieform');
+});
+Route::post('/setcookie2', [cookieformController1::class, 'setcookie2']);
+
+
+
+
+
+// Login using session 
+Route::get('viewloginpage', [loginController::class, 'viewloginpage']);
+Route::post('loginsession', [loginController::class, 'loginsession']);
+Route::get('profile', [loginController::class, 'profile']);
+Route::get('logout', [loginController::class, 'logout']);
+
+// Form validation
+Route::get('validation', function(){
+    return view('validation');
+});
+Route::get('validation', [validationController::class, 'validation']);
+
+
+// Route::get('/planet-temperatures/{unit?}', [PlanetTemperatureController::class, 'index'])
+//     ->where('unit', 'celsius|fahrenheit')
+//     ->name('planet.temperatures');
